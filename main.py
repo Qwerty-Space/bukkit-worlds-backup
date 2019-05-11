@@ -1,13 +1,15 @@
 import os
+import time
+import logging
 import zipfile
 import config as c
-from datetime import datetime
-import logging
+from datetime import datetime, date
 
 logging.basicConfig(level=logging.DEBUG)
 
-d = datetime.now()
-archive_name = f"concordia_backup-{d.strftime(c.date_format)}.zip"
+now = time.time()# + 7 * 86400
+formated_date = time.strftime(c.date_format)
+archive_name = f"{c.archive_prefix}_{formated_date}.zip"
 
 world = os.path.join(c.server_root, "world")
 world_nether = os.path.join(c.server_root, "world_nether")
@@ -24,6 +26,13 @@ def zipdirs(paths, ziph):
     for path in paths:
         add_files(path)
 
+def remove_old():
+    files = os.listdir(c.backup_location)
+    for f in files:
+        if os.stat(os.path.join(c.backup_location, f)).st_mtime < now - c.delete_threshold * 86400:
+            print(f)
+
+
 def main():
     zipf = zipfile.ZipFile(os.path.join(c.backup_location, archive_name), "w", zipfile.ZIP_DEFLATED)
     zipdirs((world, world_nether, world_end), zipf)
@@ -31,6 +40,6 @@ def main():
     zipf.close()
 
 
-
 if __name__ == "__main__":
     main()
+    remove_old()
