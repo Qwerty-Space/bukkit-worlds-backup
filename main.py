@@ -1,8 +1,8 @@
 import os
-import time
 import logging
 import zipfile
 import config as c
+import time
 from datetime import datetime, date
 
 logging.basicConfig(level=logging.DEBUG)
@@ -23,20 +23,30 @@ def zipdirs(paths, ziph):
             for f in files:
                 f_dir = os.path.join(root, f)
                 ziph.write(f_dir, arcname=os.path.relpath(os.path.join(root, f), c.server_root))
+                print(f"Written file {f}")
     for path in paths:
+        if not os.path.isdir(path):
+            print(f"{path} does not exist")
+            continue
+        print(f"Adding {path}")
         add_files(path)
 
 def remove_old():
+    print("Checking for old files")
     files = os.listdir(c.backup_location)
     for f in files:
         if os.stat(os.path.join(c.backup_location, f)).st_mtime < now - c.delete_threshold * 86400:
+            # os.remove(f)
             print(f)
 
 
 def main():
-    zipf = zipfile.ZipFile(os.path.join(c.backup_location, archive_name), "w", zipfile.ZIP_DEFLATED)
+    try:
+        zipf = zipfile.ZipFile(os.path.join(c.backup_location, archive_name), "w", zipfile.ZIP_DEFLATED)
+    except FileNotFoundError:
+        print(f"{c.backup_location} does not exist")
+    print("Zipping files")
     zipdirs((world, world_nether, world_end), zipf)
-    print(zipf)
     zipf.close()
 
 
