@@ -42,7 +42,7 @@ def remove_old():
 
 def main():
     try:
-        zipf = zipfile.ZipFile(os.path.join(c.backup_location, archive_name), "w", zipfile.ZIP_STORE)
+        zipf = zipfile.ZipFile(os.path.join(c.backup_location, archive_name), "w", zipfile.ZIP_STORED)
     except FileNotFoundError:
         print(f"{c.backup_location} does not exist")
     print("Zipping files")
