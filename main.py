@@ -31,25 +31,25 @@ def zipdirs(paths, ziph):
         print(f"Adding {path}")
         add_files(path)
 
-def remove_old():
-    print("Checking for old files")
-    files = os.listdir(c.backup_location)
-    for f in files:
-        if os.stat(os.path.join(c.backup_location, f)).st_mtime < now - c.delete_threshold * 86400:
-            # os.remove(f)
-            print(f)
-
-
-def main():
+def backup():
     try:
-        zipf = zipfile.ZipFile(os.path.join(c.backup_location, archive_name), "w", zipfile.ZIP_STORED)
+        zipf = zipfile.ZipFile(os.path.join(c.backup_location, archive_name), "w", c.backup_format)
     except FileNotFoundError:
         print(f"{c.backup_location} does not exist")
     print("Zipping files")
     zipdirs((world, world_nether, world_end), zipf)
     zipf.close()
 
+def remove_old():
+    print("Checking for old files")
+    files = os.listdir(c.backup_location)
+    for f in files:
+        f = os.path.join(c.backup_location, f)
+        if os.stat(f).st_mtime < now - c.delete_threshold * 86400:
+            # os.remove(f)
+            print(f)
+
 
 if __name__ == "__main__":
-    main()
+    backup()
     remove_old()
