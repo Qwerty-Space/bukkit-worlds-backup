@@ -7,7 +7,6 @@ from datetime import datetime, date
 
 logging.basicConfig(level=logging.DEBUG)
 
-now = time.time()# + 7 * 86400
 formated_date = time.strftime(c.date_format)
 archive_name = f"{c.archive_prefix}_{formated_date}.zip"
 
