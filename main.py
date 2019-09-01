@@ -42,7 +42,7 @@ def backup():
 def remove_old():
     print("Checking for old files:")
 
-    with os.scandir(c.check_location) as fs:
+    with os.scandir(c.backup_location) as fs:
         sorted_files = sorted(fs, key=lambda f: (f.stat().st_mtime, f.path))
         rmamnt = max(0, len(sorted_files) - c.delete_threshold)
 
